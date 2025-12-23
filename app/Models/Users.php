@@ -18,7 +18,8 @@ class Users extends Model
     // chọn các cột cần hiển thị
     ->select('users.*','groups.name as group_name')
    //join bảng
-   ->join('groups','users.group_id','=','groups.id');
+   ->join('groups','users.group_id','=','groups.id')
+   ->where('trash',0);
    $orderBy='users.create_at';
    $orderType='desc';
    if(!empty($sortByArr)&& is_array($sortByArr)){
@@ -53,18 +54,31 @@ class Users extends Model
     // dd($sql);
     return $users;
   }
-  public function addUser($data){
-    DB::insert('INSERT INTO users (fullname,email,create_at) value (?,?,?)',$data);
+  // raw query
+//   public function addUser($data){
+//     DB::insert('INSERT INTO users (fullname,email,create_at) value (?,?,?)',$data);
+//   }
+// query buider
+    public function addUser($data){
+   return DB::table($this->table)->insert($data);
   }
     public function getDetail($id){
      return DB::select('SELECT * FROM ' . $this->table . ' WHERE id = ?', [$id]);
   }
-  public function updateUser($data,$id){
-    $data = array_merge($data,[$id]);
-    return DB::update('UPDATE ' . $this->table .' SET fullname=?,email=?,update_at=? WHERE id =?',$data);
+    //   public function getDetail($id){
+//      return DB::table($this->table)->where('id',$id)->get();
+//   }
+//   public function updateUser($data,$id){
+//     $data = array_merge($data,[$id]);
+//     return DB::update('UPDATE ' . $this->table .' SET fullname=?,email=?,update_at=? WHERE id =?',$data);
+//   }
+   public function updateUser($data,$id){
+    return DB::table($this->table)->where('id',$id)->update($data);
   }
   public function deleteUser($id){
-    return DB::delete("DELETE FROM $this->table WHERE id=?",[$id]);
+    // return DB::delete("DELETE FROM $this->table WHERE id=?",[$id]);
+    return DB::table($this->table)->where('id',$id)->delete();
+
   }
   public function statementUser($sql)
   {

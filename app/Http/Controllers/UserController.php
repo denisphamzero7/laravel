@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Users;
+use App\Models\Phone;
+use App\Models\Groups;
 use App\Http\Requests\UserRequest;
 class UserController extends Controller
 {
@@ -165,5 +167,30 @@ public function delete($id=0){
      $msg='Liên kết không tồn tại';
    }
      return back()->with('msg',$msg);
+}
+public function relations(){
+    // Gọi theo thuộc tính
+    // $phone= Users::find(3)->phone;
+    // $idphone=$phone->id;
+    // $phoneNumber=$phone->phone;
+    // echo 'id phone'.$idphone.'<br>';
+    // echo 'phone number'.$phoneNumber;
+    // Gọi theo phương thức
+    // $phone = Users::find(3)->phone();
+    // dd($phone);
+    // $user= Phone::where('phone','0337335747')->first()->user;
+    // $fullname=$user->fullname;
+    // echo 'Full name:'.$fullname;
+//   $users= Groups::find(1)
+//   ->users()
+//   ->where('email','thuong@gmail.com')->get();
+//   if($users->count()>0){
+//     foreach($users as $item){
+//         echo $item->fullname.'<br/>';
+//     }
+//   }
+$group = Users::find(3)->group;
+$name=$group->name;
+echo 'Tên group:'.$name;
 }
 }

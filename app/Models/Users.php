@@ -1,15 +1,31 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Phone;
+use App\Models\Groups;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 // use Illuminate\Database\Eloquent\HasFastory;
-use DB;
+
 class Users extends Model
 {
 
  protected $table = 'users';
-
+  public function phone(){
+    return $this->hasOne(
+        Phone::class,
+        'user_id',// khóa ngoại
+        'id'// khóa chính của bản địa phương tức là khóa chính của bảng user là id
+    );
+  }
+  // Ví dụ mình có 1 user mình muốn biết group của ông đó là gì
+    public function group(){
+    return $this->belongsTo(
+        Groups::class,
+        'group_id',// khóa ngoại
+        'id'// khóa chính của bản địa phương tức là khóa chính của bảng user là id
+    );
+  }
 
   public function getAllUsers($filters=[],$keywords=null,$sortBy=null,$sortByArr = null,$perPage=0){
     // $users= DB::select('SELECT * FROM users ORDER BY create_at DESC');

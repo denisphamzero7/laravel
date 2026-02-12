@@ -21,7 +21,7 @@ use App\Models\Comments;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AdminController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-
+use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Doctors\Auth\ForgotPasswordController as DoctorForgotPasswordController;
 use App\Http\Controllers\Doctors\Auth\LoginController;
 use App\Http\Controllers\Doctors\IndexController;
@@ -319,11 +319,11 @@ Route::prefix('doctor')->name('doctors.')->group(function(){
 
 Route::prefix('admin')->middleware(['auth','verified'])->name('admin.')->group(function(){
     Route::get('/',[AdminController::class,'index']);
-    Route::prefix('posts')->name('posts.')->group(function(){
-        Route::get('/',[PostController::class,'index'])->name('index');
-        Route::get('/add',[PostController::class,'add'])->name('add');
-        Route::get('/edit/{id}',[PostController::class,'update'])->name('update');
-        Route::get('/delete/{id}',[PostController::class,'delete'])->name('delete');
-        Route::post('/delete-any',[PostController::class,'deleteAny'])->name('delete-any');
+    Route::prefix('post')->name('post.')->group(function(){
+        Route::get('/',[AdminPostController::class,'index'])->name('index');
+        Route::get('/add',[AdminPostController::class,'add'])->name('add');
+        Route::get('/edit/{id}',[AdminPostController::class,'edit'])->name('update');
+        Route::get('/delete/{id}',[AdminPostController::class,'delete'])->name('delete');
+        Route::post('/delete-any',[AdminPostController::class,'deleteAny'])->name('delete-any');
     });
 });

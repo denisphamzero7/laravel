@@ -9,7 +9,7 @@ use App\Models\Comments; // ĐÚNG: App viết thường, Models có s
 use App\Models\Votes;
 class Post extends Model
 {   // Sử dụng sortdelete
-    use SoftDeletes;
+    // use SoftDeletes;
     // Quy ước đặt tên table
     /*
     Tên Model: Post => table: posts
@@ -18,14 +18,14 @@ class Post extends Model
     // đặt tên table
     protected $table ='posts';
     //Quy tắt khóa chính, mặc định laravel sẽ lấy field id làm khóa chính
-    protected $primarykey= 'id';
+    protected $primaryKey = 'id';
     // Trường hợp khóa chính không để chế độ Auto increment
-    public $incrementing =false;
+    public $incrementing = true;
     // Thay đổi kiểu key
-    protected $keyType= 'string';
-    public $timestamp =true;
-    const CREATED_AT='create_at';
-    const UPDATED_AT='update_at';
+    protected $keyType = 'int';
+    public $timestamps = true;
+    // const CREATED_AT='create_at';
+    // const UPDATED_AT='update_at';
     // để giá trị mặt định
      protected $attributes =[
              'status'=>0
@@ -36,7 +36,7 @@ class Post extends Model
            Categories::class,
            'categories_post',// Bang trung gian
            'post_id',// Khóa ngoại trung gian
-           'categories_id'// Khóa ngoại trung gian`
+           'categories_id'// Khóa ngoại trung gian
         )->withPivot('created_at');// Lưu ý đây trường của bảng trung gian
     }
     public function comment() // Tên hàm này phải khớp với tham số trong whereHas('comment')

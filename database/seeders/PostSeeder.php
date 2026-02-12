@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Post;
+use Faker\Factory as Faker;
+
 class PostSeeder extends Seeder
 {
     /**
@@ -12,16 +13,13 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        DB::table('posts')->insert([
-            [
-                'title' => 'First Post',
-                'content' => 'This is the content of the first post.',
-            ],
-            [
-                'title' => 'Second Post',
-                'content' => 'This is the content of the second post.',
-            ],
-        ]);
+        $faker = Faker::create();
+
+        for ($i = 0; $i < 20; $i++) {
+            Post::create([
+                'title' => $faker->sentence,
+                'content' => $faker->paragraph,
+            ]);
+        }
     }
 }

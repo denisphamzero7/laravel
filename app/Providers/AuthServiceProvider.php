@@ -29,12 +29,12 @@ class AuthServiceProvider extends ServiceProvider
             return 'http://example.com/doctors/reset-password?token=' . $token . '&email=' . urlencode($doctor->email);
         });
         // Định nghĩa gate: user này có quyền thêm bài viết không
-        // Gate::define('post.add', function (User $user) {
+        Gate::define('post.add', function (User $user) {
 
-        //     return true;
-        // });
+            return true;
+        });
 
-        Gate::define('post.add', [PostPolicy::class,'add']);
+        // Gate::define('post.add', [PostPolicy::class,'add']);
 
         Gate::define('post.update', function (User $user, Post $post) {
             return $user->id === $post->user_id;

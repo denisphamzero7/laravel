@@ -322,7 +322,7 @@ Route::prefix('admin')->middleware(['auth','verified'])->name('admin.')->group(f
     Route::prefix('post')->name('post.')->group(function(){
         Route::get('/',[AdminPostController::class,'index'])->name('index');
         Route::get('/add',[AdminPostController::class,'add'])->name('add');
-        Route::get('/edit/{id}',[AdminPostController::class,'edit'])->name('update');
+        Route::get('/edit/{post}',[AdminPostController::class,'edit'])->middleware('can:post.update,post')->name('edit');
         Route::get('/delete/{id}',[AdminPostController::class,'delete'])->name('delete');
         Route::post('/delete-any',[AdminPostController::class,'deleteAny'])->name('delete-any');
     });

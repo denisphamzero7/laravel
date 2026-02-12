@@ -74,6 +74,6 @@ protected function failedAuthorization(){
     // throw new AuthorizationException(' Bạn đéo có quyền');
     // chuyển hướng
 //    throw new HttpResponseException(redirect('/')->with('msg','Bạn tuổi gì có quyền')->with('type','danger'));
-throw new HttpResponseException(redirect(abort(404)));
+throw new HttpResponseException(abort(404));
 }
 }

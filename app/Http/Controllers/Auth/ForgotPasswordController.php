@@ -19,4 +19,12 @@ class ForgotPasswordController extends Controller
     */
 
     use SendsPasswordResetEmails;
+      protected function validationErrorMessages()
+   {
+     return [
+          'email.required' => 'Email không để trống',
+          'email.email' => 'Email không đúng định dạng',
+
+     ];
+   }
 }

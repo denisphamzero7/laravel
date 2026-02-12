@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Pagination\Paginator;
 class AppServiceProvider extends ServiceProvider
 {
+
+
+
+    public const ADMIN = '/admin';
+    public const DOCTOR = '/doctor';
+
+
     /**
      * Register any application services.
      */

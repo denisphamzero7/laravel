@@ -5,13 +5,13 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <div class="card-header">Khu vực dành cho bác sĩ</div>
 
                 <div class="card-body">
                        @if ($errors->any())
                        <div class="alert alert-danger justify-center">Đã có lỗi xảy ra</div>
                        @endif
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="{{ route('doctors.login') }}">
                         @csrf
 
                         <div class="row mb-3">
@@ -60,9 +60,9 @@
                                     {{ __('Login') }}
                                 </button>
 
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
+                                @if (Route::has('doctors.forgot-password'))
+                                    <a class="btn btn-link" href="{{ route('doctors.forgot-password') }}">
+                                        Quên mật khẩu?
                                     </a>
                                 @endif
                             </div>

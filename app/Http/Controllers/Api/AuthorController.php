@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
@@ -13,8 +14,8 @@ class AuthorController extends Controller
     }
     public function login (){
         $credential = request(['email','password']);
-        if(!$token= auth()->attemp($credential)){
-            return response()->json(['errors'=>'Authorized'],401);
+        if(!$token = Auth::guard('api')->attempt($credential)){
+            return response()->json(['errors'=>'Unauthorized'],401);
         }
         return $this->respondWithToken($token);
     }
@@ -24,7 +25,7 @@ class AuthorController extends Controller
             [
                 'access_token'=>$token,
                 'token_type'=>'bearer',
-                'expires_in'=> auth()->factory()->getTTL()*60,
+                'expires_in'=> config('jwt.ttl') * 60,
             ]
         );
     }

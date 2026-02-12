@@ -27,6 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.admin' => \App\Http\Middleware\CheckLoginAdmin::class,
             'product.permission' => \App\Http\Middleware\ProductPermission::class,
+            'guest.custom' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+
         ]);
 
     })

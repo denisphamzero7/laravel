@@ -19,8 +19,15 @@ use App\Models\Cars;
 use App\Models\Users;
 use App\Models\Comments;
 use Illuminate\Support\Facades\DB;
-use SebastianBergmann\FileIterator\Factory;
-use Faker\Factory as FakerFactory;
+use App\Http\Controllers\AdminController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
+use App\Http\Controllers\Doctors\Auth\ForgotPasswordController as DoctorForgotPasswordController;
+use App\Http\Controllers\Doctors\Auth\LoginController;
+use App\Http\Controllers\Doctors\IndexController;
+
+// use SebastianBergmann\FileIterator\Factory;
+// use Faker\Factory as FakerFactory;
 Route::get('/unicode', function () {
     return view('form');
 });
@@ -240,7 +247,7 @@ Route::get('/user1',function(){
 Route::get('/post', function(){
    DB::enableQueryLog();
     $post = Post::find(2);
-    $comment = New Comments(
+    $comment = new Comments(
         [
             "name"=>"new name",
             "content"=>" comments"
@@ -251,22 +258,72 @@ Route::get('/post', function(){
     dd(DB::getQueryLog());
 });
 
-Route::get('/',function(){
-    $faker= FakerFactory::create();
-    $customers =[];
-    for($i=0;$i<10;$i++){
-        $customers[$i]=[
-            'name'=>$faker->name(),
-            'email'=>$faker->unique()->safeEmail(),
-            'address'=>$faker->address(),
-            'created_at'=>date('Y-m-d H:i:s'),
-            'updated_at'=>date('Y-m-d H:i:s'),
-        ];
-    }
-    dd($customers);
-})
-;
+// Route::get('/',function(){
+//     $faker= FakerFactory::create();
+//     $customers =[];
+//     for($i=0;$i<10;$i++){
+//         $customers[$i]=[
+//             'name'=>$faker->name(),
+//             'email'=>$faker->unique()->safeEmail(),
+//             'address'=>$faker->address(),
+//             'created_at'=>date('Y-m-d H:i:s'),
+//             'updated_at'=>date('Y-m-d H:i:s'),
+//         ];
+//     }
+//     dd($customers);
+// })
+// ;
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// middleware auth để bảo vệ route chỉ cho phép user đã đăng nhập mới được truy cập
+Route::get('/admin',[AdminController::class,'index'])->name('admin.home')->middleware('auth');
+Route::get('/email/verify',function(){
+     return view('auth.verify');
+  })->middleware('auth')->name('verification.notice');
+  //gửi mail để xát thực
+Route::get('/email/verify/{id}/{hash}',function (EmailVerificationRequest $request){
+  $request->fulfill();
+   return redirect ('home');
+  })->middleware(['auth','signed'])->name('verification.verify');
+  // gửi lại email nếu không tìm thấy thông báo
+Route::post ('/email/verification-notification',function (Request $request){
+  $request->user()->sendEmailVerificationNotification();
+  return back()->with('message',"Verification link sent!");
+  })->middleware(['auth','throttle:6,1'])->name('verification.resend');
+
+
+// Mutiple Auth Guard cho Doctor
+// Thay 'guest:doctor' bằng 'guest.custom:doctor'
+Route::prefix('doctor')->name('doctors.')->group(function(){
+
+    // Các trang dành cho khách (chưa đăng nhập) mới được vào
+    // Nếu đã đăng nhập doctor rồi mà vào đây sẽ bị middleware của bạn đá về trang DOCTOR
+    Route::middleware('guest.custom:doctor')->group(function() {
+        Route::get('/login',[LoginController::class,'showLoginForm'])->name('login');
+        Route::post('/login',[LoginController::class,'login'])->name('login.submit');
+        Route::get('/forgot-password',[DoctorForgotPasswordController::class,'getForgotPassword'])->name('forgot-password');
+        Route::post('/forgot-password',[DoctorForgotPasswordController::class,'reset'])->name('reset-forgot-password');
+    });
+
+    // Các trang yêu cầu phải đăng nhập mới được vào
+    Route::middleware('auth:doctor')->group(function() {
+        Route::get('/', [IndexController::class, 'index'])->name('home');
+        Route::post('/logout',function(){
+            Auth::guard('doctor')->logout();
+            return redirect()->route('doctors.login');
+        })->name('logout');
+    });
+});
+
+Route::prefix('admin')->middleware(['auth','verified'])->name('admin.')->group(function(){
+    Route::get('/',[AdminController::class,'index']);
+    Route::prefix('posts')->name('posts.')->group(function(){
+        Route::get('/',[PostController::class,'index'])->name('index');
+        Route::get('/add',[PostController::class,'add'])->name('add');
+        Route::get('/edit/{id}',[PostController::class,'update'])->name('update');
+        Route::get('/delete/{id}',[PostController::class,'delete'])->name('delete');
+        Route::post('/delete-any',[PostController::class,'deleteAny'])->name('delete-any');
+    });
+});
